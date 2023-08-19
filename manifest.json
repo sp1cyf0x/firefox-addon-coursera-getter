@@ -1,13 +1,28 @@
 {
-  "manifest_version": 2,
-
-  "name": "Coursera Get Shareable Link",
-  "description": "Get shareable link Coursera Peer-review",
-  "version": "1.0.0",
-  "icons": { "128": "icon_128.png" },
-  "browser_action": {
-    "default_icon": "icon.png",
+  "manifest_version": 3,
+  "name": "Get Shareable Coursera Link",
+  "developer": {
+    "name": "sp1cyf0x",
+    "url": "https://github.com/sp1cyf0x/firefox-addon-coursera-getter"
+  },
+  "version": "1.0.1",
+  "description": "Get shareable link for Coursera Peer-graded Assignments",
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "2277388779e72e93d232295a1c203245c1eec5d7@example.com"
+    }
+  },
+  "action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["activeTab", "<all_urls>"]
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://www.coursera.org/*"
+  ]
 }

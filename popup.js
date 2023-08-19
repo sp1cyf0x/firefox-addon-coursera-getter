@@ -1,44 +1,23 @@
-// window.onload = function () {
-//   var txtAreas = document.getElementsByTagName("textarea");
-//   for (var i = 0; i < txtAreas.length; i++) {
-//     document.getElementById("abc").value = txtAreas[i].id;
-//   }
-// };
-// var tab_title = '';
-// function display_h1 (results){
-//     console.log(results);
-//   h1=results;
-//   document.querySelector("#abc").value = h1;
-
-// }
-// chrome.tabs.query({active: true}, function(tabs) {
-//   var tab = tabs[0];
-//   tab_title = tab.title;
-//   chrome.tabs.executeScript(tab.id, {
-//     code: 'document.querySelector("._10nd10j").id'
-//   }, display_h1);
-// });
-
 var submissionID = "";
-function displayLink(id) {
-  if (id == null || id[0] == null) {
+function displayLink(injectionResult) {
+  var id = injectionResult?.[0].result;
+  if (id == null) {
     document.querySelector(".input-group").style.display = "none";
     document.querySelector(".container").innerHTML += `
     <div class="alert alert-warning" role="alert">
-        Sorry, There is no link available current browser tab. 
-        Please make sure you are in the <strong>"My submission"</strong> tab
+        Make sure you are in the <strong>My submission</strong> tab.
     </div>
     `;
   } else {
-    submissionID = id[0].substring(0, id[0].indexOf("~"));
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tab) {
+    submissionID = id.substring(0, id.indexOf("~"));
+    browser.tabs.query({ active: true, currentWindow: true }, function (tab) {
       //Be aware that `tab` is an array of Tabs
       let fromIndex = 0;
       let countSlash = 0;
       //https://www.coursera.org/learn/detect-mitigate-ethical-risks/peer/oqeJE/algorithmic-impact-assessment-aia/submit
       //      ^^                ^     ^                             ^    ^     ^                                 ^
       //Total 8 slash before the end of "real" link
-      //So we will scan ultil slash number 8 and then stop
+      //So we will romescan ultil slash number 8 and then stop
       while (tab[0].url.indexOf("/", fromIndex) != -1) {
         fromIndex = tab[0].url.indexOf("/", fromIndex + 1);
         countSlash++;
@@ -49,17 +28,23 @@ function displayLink(id) {
     });
   }
 }
-chrome.tabs.query({ active: true }, function (tabs) {
+
+function getSubmissionId() {
+  return document.getElementsByClassName("_10nd10j")[0]?.id;
+}
+
+browser.tabs.query({ active: true }, function (tabs) {
   var tab = tabs[0];
   tab_title = tab.title;
-  chrome.tabs.executeScript(
-    tab.id,
+  browser.scripting.executeScript(
     {
-      code: 'document.getElementsByClassName("_10nd10j")[0].id',
+      target: { tabId: tab.id },
+      func: getSubmissionId,
     },
     displayLink
   );
 });
+
 window.onload = function () {
   "use strict";
 
@@ -93,15 +78,8 @@ window.onload = function () {
     }
 
     return succeed;
-  }
-  document.getElementById("copyButton").addEventListener("click", function () {
-    copyToClipboard(document.getElementById("shareLink"));
-  });
+  };
   document.getElementById("shareLink").addEventListener("click", function () {
     copyToClipboard(document.getElementById("shareLink"));
   });
-  //   console.log(document.querySelector("#shareLink"));
-  //   $("#copyButton, #shareLink").on("click", function () {
-  //     copyToClipboard(document.getElementById("shareLink"));
-  //   });
-};
+}
